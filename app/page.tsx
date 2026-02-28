@@ -9,11 +9,62 @@ import {
 } from "framer-motion";
 import React, { useRef, useState } from "react";
 
+// DATA REVIEW ASLI DARI SCREENSHOT PELANGGAN REFINEE
+const REVIEWS = [
+  {
+    name: "Pelanggan Shopee",
+    role: "Verified Buyer",
+    text: "Wajib punya semua produk refinee ❤️.. kualitas bahannya bagus bgt",
+    rating: 5,
+  },
+  {
+    name: "w*****w",
+    role: "Verified Buyer",
+    text: "Short pantsnya bagus bahannya parasut crincle adem halus dan cukup tebal ga tipis, warna hitamnya pekat... pengirimannya cepat 👍 recommended",
+    rating: 5,
+  },
+  {
+    name: "okibumi20",
+    role: "Verified Buyer",
+    text: "Ternyata celana nya bagus banget nyaman di pakai. Harga nya murah bgt tapi kualitas terbaik. Nex mau order lagi",
+    rating: 5,
+  },
+  {
+    name: "Pelanggan Shopee",
+    role: "Verified Buyer",
+    text: 'Bahan lembut, nyaman adem dipake sehari" Karet juga melar, cakep banget modelny',
+    rating: 5,
+  },
+  {
+    name: "d*****t",
+    role: "Verified Buyer",
+    text: "Sesuai pesanan, pelayanan seller baik, harga oke, ukuran pas sesuai rekomendasi, pengiriman cukup cepat... jahitan rapih, recomended. Trims",
+    rating: 5,
+  },
+  {
+    name: "_*****_",
+    role: "Verified Buyer",
+    text: "WORTHED BANGET CELANANYA! SUMPAH NGGA BAKAL RUGI. TOTAL SAYA PUNYA 4, BEDA-BEDA WARNA... SELLER-NYA JUGA OK BGT...",
+    rating: 5,
+  },
+  {
+    name: "aherrudin",
+    role: "Verified Buyer",
+    text: "Pknya real pict sesuai harapan barang bagus sangat mahal harga murah....pknya puas banget ga bakal menyesal sukses trs buat tokonya",
+    rating: 5,
+  },
+  {
+    name: "Pelanggan Shopee",
+    role: "Verified Buyer",
+    text: "Bagus produknya , kainnya halus dan ringan okelah tentunya pasti nyaman digunakan.",
+    rating: 5,
+  },
+];
+
 export default function CompanyProfile() {
   const { scrollYProgress, scrollY } = useScroll();
   const heroRef = useRef(null);
 
-  // STATE UNTUK MELACAK ARAH SCROLL
   const [scrollDir, setScrollDir] = useState("down");
 
   useMotionValueEvent(scrollY, "change", (current) => {
@@ -32,10 +83,8 @@ export default function CompanyProfile() {
     offset: ["start start", "end start"],
   });
 
-  // Efek parallax: gambar bergeser sedikit ke bawah saat di-scroll
   const heroY = useTransform(heroScroll, [0, 1], ["0%", "30%"]);
 
-  // PERBAIKAN ERROR TYPESCRIPT ADA DI BARIS INI:
   const customEasing: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   const maskReveal: Variants = {
@@ -79,6 +128,20 @@ export default function CompanyProfile() {
     },
   };
 
+  const StarRating = ({ count }: { count: number }) => (
+    <div className="flex gap-1 text-[#FFD700] mb-4">
+      {[...Array(5)].map((_, i) => (
+        <svg
+          key={i}
+          className={`w-4 h-4 ${i < count ? "fill-current" : "fill-gray-200"}`}
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans overflow-x-hidden selection:bg-black selection:text-white">
       {/* SCROLL PROGRESS BAR */}
@@ -121,24 +184,22 @@ export default function CompanyProfile() {
         </div>
       </motion.nav>
 
-      {/* HERO SECTION - BEBAS POTONG (NO CROP) */}
+      {/* HERO SECTION */}
       <section
         id="home"
         ref={heroRef}
-        // Kita hapus h-screen. Tambahkan padding-top agar gambar turun ke bawah navbar
         className="relative w-full pt-[72px] md:pt-[88px] bg-white overflow-hidden flex flex-col items-center"
       >
         <motion.div
           style={{ y: heroY }}
-          className="relative w-full max-w-[120rem]" // Dibatasi lebarnya untuk monitor super ultra-wide agar tidak pecah
+          className="relative w-full max-w-[120rem]"
         >
           <motion.img
             initial={{ scale: 1.05, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.5, ease: customEasing }}
-            src="/hero-image.png" // Cukup gunakan 1 gambar asli ini saja
+            src="/hero-image.png"
             alt="Refinée Campaign"
-            // Kunci utama penyelesaian bug: w-full dan h-auto. Gambar otomatis menyesuaikan layar 100% utuh
             className="w-full h-auto block object-contain"
           />
         </motion.div>
@@ -228,20 +289,17 @@ export default function CompanyProfile() {
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
             >
-              {/* IMAGE CONTAINER — NO FORCED RATIO */}
-              <div className="relative w-full overflow-hidden">
+              <div className="relative w-full overflow-hidden bg-[#f8f8f8]">
                 <motion.img
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: customEasing }}
                   src="/freya-knit.png"
                   alt="Freya Knit Neck Tee"
-                  className="w-full h-auto block"
+                  className="w-full h-auto block object-contain p-4 md:p-8"
                 />
 
-                {/* OVERLAY */}
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                {/* BUTTON */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                   <span className="bg-black text-white text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl">
                     View Details
@@ -249,7 +307,6 @@ export default function CompanyProfile() {
                 </div>
               </div>
 
-              {/* TEXT */}
               <div className="p-6 md:p-8 flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-4">
                   <div>
@@ -276,20 +333,17 @@ export default function CompanyProfile() {
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
             >
-              {/* IMAGE CONTAINER — NO FORCED RATIO */}
-              <div className="relative w-full overflow-hidden">
+              <div className="relative w-full overflow-hidden bg-[#f8f8f8]">
                 <motion.img
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: customEasing }}
                   src="/boardshort.png"
                   alt="Boardshort Pants Crinkle"
-                  className="w-full h-auto block"
+                  className="w-full h-auto block object-contain p-4 md:p-8"
                 />
 
-                {/* OVERLAY */}
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                {/* BUTTON */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                   <span className="bg-black text-white text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl">
                     View Details
@@ -297,7 +351,6 @@ export default function CompanyProfile() {
                 </div>
               </div>
 
-              {/* TEXT */}
               <div className="p-6 md:p-8 flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-4">
                   <div>
@@ -320,8 +373,73 @@ export default function CompanyProfile() {
         </motion.div>
       </section>
 
+      {/* REVIEWS SECTION (SINGLE MARQUEE KE KANAN) */}
+      <section className="relative z-20 py-20 md:py-32 bg-white overflow-hidden border-t border-gray-100">
+        <motion.div
+          custom={scrollDir}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, margin: "-10% 0px -10% 0px" }}
+          variants={staggerContainer}
+          className="text-center max-w-3xl mx-auto mb-16 md:mb-20"
+        >
+          <div className="overflow-hidden flex justify-center">
+            <motion.span
+              variants={maskReveal}
+              className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-4 block"
+            >
+              Testimonials
+            </motion.span>
+          </div>
+          <div className="overflow-hidden flex justify-center">
+            <motion.h2
+              variants={maskReveal}
+              className="text-4xl md:text-6xl font-black tracking-tighter text-gray-900"
+            >
+              COMMUNITY
+            </motion.h2>
+          </div>
+        </motion.div>
+
+        {/* Container Marquee Tunggal dengan Fading Edges */}
+        <div className="w-full relative [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          {/* BARIS TUNGGAL: Bergerak Kiri ke Kanan (Diubah nilai X nya) */}
+          <motion.div
+            animate={{ x: ["-50%", "0%"] }}
+            transition={{ ease: "linear", duration: 50, repeat: Infinity }}
+            className="flex w-max gap-6 md:gap-8 hover:[animation-play-state:paused] pb-4"
+          >
+            {/* Duplikasi array untuk memastikan loop tidak pernah putus */}
+            {[...Array(2)].map((_, i) => (
+              <React.Fragment key={`row-${i}`}>
+                {REVIEWS.map((review, idx) => (
+                  <div
+                    key={idx}
+                    className="w-[320px] md:w-[450px] flex-shrink-0 bg-[#fafafa] p-8 md:p-10 rounded-3xl border border-gray-100 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
+                  >
+                    <div>
+                      <StarRating count={review.rating} />
+                      {/* PERBAIKAN ERROR: Menggunakan &quot; pengganti tanda kutip ganda */}
+                      <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-8 italic font-serif">
+                        &quot;{review.text}&quot;
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900">{review.name}</h4>
+                      <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider mt-1">
+                        {review.role}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* FOOTER */}
-      <footer className="bg-black text-white pt-20 md:pt-24 pb-10 md:pb-12 px-5 md:px-8 border-t border-gray-900 relative z-20 overflow-hidden">
+      <footer className="bg-black text-white pt-20 md:pt-24 pb-10 md:pb-12 px-5 md:px-8 relative z-20 overflow-hidden">
         <motion.div
           custom={scrollDir}
           initial="hidden"
