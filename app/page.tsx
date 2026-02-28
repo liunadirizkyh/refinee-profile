@@ -35,7 +35,8 @@ export default function CompanyProfile() {
   // Efek parallax: gambar bergeser sedikit ke bawah saat di-scroll
   const heroY = useTransform(heroScroll, [0, 1], ["0%", "30%"]);
 
-  const customEasing = [0.16, 1, 0.3, 1];
+  // PERBAIKAN ERROR TYPESCRIPT ADA DI BARIS INI:
+  const customEasing: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   const maskReveal: Variants = {
     hidden: (dir: string) => ({
