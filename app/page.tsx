@@ -7,9 +7,9 @@ import {
   Variants,
   useMotionValueEvent,
 } from "framer-motion";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
-// DATA REVIEW ASLI DARI SCREENSHOT PELANGGAN REFINEE
+// DATA REVIEW ASLI DARI PELANGGAN REFINEE
 const REVIEWS = [
   {
     name: "Pelanggan Shopee",
@@ -84,7 +84,6 @@ export default function CompanyProfile() {
   });
 
   const heroY = useTransform(heroScroll, [0, 1], ["0%", "30%"]);
-
   const customEasing: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   const maskReveal: Variants = {
@@ -141,6 +140,75 @@ export default function CompanyProfile() {
       ))}
     </div>
   );
+
+  // -------------------------------------------------------------
+  // LOGIKA DRAGGABLE + AUTO-SCROLL (KIRI KE KANAN)
+  // -------------------------------------------------------------
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false); // Hover dihapus, hanya pakai Dragging
+  const [startX, setStartX] = useState(0);
+  const [startScrollLeft, setStartScrollLeft] = useState(0);
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+
+    let animationId: number;
+
+    // Set posisi awal scroll di tengah agar bisa ditarik
+    if (el.scrollLeft === 0) {
+      el.scrollLeft = el.scrollWidth / 2;
+    }
+
+    const autoScroll = () => {
+      // HANYA BERHENTI SAAT DI-DRAG (DIKLIK & DITAHAN)
+      if (!isDragging) {
+        el.scrollLeft -= 1; // Auto-jalan ke kanan
+
+        // Infinite Loop Kiri ke Kanan
+        if (el.scrollLeft <= 0) {
+          el.scrollLeft += el.scrollWidth / 2;
+        }
+      }
+      animationId = requestAnimationFrame(autoScroll);
+    };
+
+    animationId = requestAnimationFrame(autoScroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isDragging]);
+
+  // Fungsi Drag untuk Desktop (Mouse)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    if (carouselRef.current) {
+      setStartX(e.pageX - carouselRef.current.offsetLeft);
+      setStartScrollLeft(carouselRef.current.scrollLeft);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !carouselRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    carouselRef.current.scrollLeft = startScrollLeft - walk;
+
+    // Infinite Loop saat ditarik manual
+    if (carouselRef.current.scrollLeft <= 0) {
+      carouselRef.current.scrollLeft += carouselRef.current.scrollWidth / 2;
+      setStartX(e.pageX - carouselRef.current.offsetLeft);
+      setStartScrollLeft(carouselRef.current.scrollLeft);
+    } else if (
+      carouselRef.current.scrollLeft >=
+      carouselRef.current.scrollWidth - carouselRef.current.clientWidth
+    ) {
+      carouselRef.current.scrollLeft -= carouselRef.current.scrollWidth / 2;
+      setStartX(e.pageX - carouselRef.current.offsetLeft);
+      setStartScrollLeft(carouselRef.current.scrollLeft);
+    }
+  };
+
+  // -------------------------------------------------------------
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans overflow-x-hidden selection:bg-black selection:text-white">
@@ -289,13 +357,13 @@ export default function CompanyProfile() {
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
             >
-              <div className="relative w-full overflow-hidden bg-[#f8f8f8]">
+              <div className="relative w-full overflow-hidden">
                 <motion.img
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: customEasing }}
                   src="/freya-knit.png"
                   alt="Freya Knit Neck Tee"
-                  className="w-full h-auto block object-contain p-4 md:p-8"
+                  className="w-full h-auto block"
                 />
 
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -333,13 +401,13 @@ export default function CompanyProfile() {
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
             >
-              <div className="relative w-full overflow-hidden bg-[#f8f8f8]">
+              <div className="relative w-full overflow-hidden">
                 <motion.img
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: customEasing }}
                   src="/boardshort.png"
                   alt="Boardshort Pants Crinkle"
-                  className="w-full h-auto block object-contain p-4 md:p-8"
+                  className="w-full h-auto block"
                 />
 
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -373,7 +441,7 @@ export default function CompanyProfile() {
         </motion.div>
       </section>
 
-      {/* REVIEWS SECTION (SINGLE MARQUEE KE KANAN) */}
+      {/* REVIEWS SECTION */}
       <section className="relative z-20 py-20 md:py-32 bg-white overflow-hidden border-t border-gray-100">
         <motion.div
           custom={scrollDir}
@@ -381,7 +449,7 @@ export default function CompanyProfile() {
           whileInView="visible"
           viewport={{ once: false, margin: "-10% 0px -10% 0px" }}
           variants={staggerContainer}
-          className="text-center max-w-3xl mx-auto mb-16 md:mb-20"
+          className="text-center max-w-3xl mx-auto mb-12 md:mb-20 px-5"
         >
           <div className="overflow-hidden flex justify-center">
             <motion.span
@@ -401,31 +469,36 @@ export default function CompanyProfile() {
           </div>
         </motion.div>
 
-        {/* Container Marquee Tunggal dengan Fading Edges */}
-        <div className="w-full relative [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-          {/* BARIS TUNGGAL: Bergerak Kiri ke Kanan (Diubah nilai X nya) */}
-          <motion.div
-            animate={{ x: ["-50%", "0%"] }}
-            transition={{ ease: "linear", duration: 50, repeat: Infinity }}
-            className="flex w-max gap-6 md:gap-8 hover:[animation-play-state:paused] pb-4"
+        <div className="w-full relative [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+          <div
+            ref={carouselRef}
+            // Event MOUSE untuk desktop
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={() => setIsDragging(false)}
+            onMouseLeave={() => setIsDragging(false)}
+            // Event TOUCH untuk HP
+            onTouchStart={() => setIsDragging(true)}
+            onTouchEnd={() => setIsDragging(false)}
+            className={`flex w-full overflow-x-auto gap-4 md:gap-8 px-5 md:px-8 pb-10 pt-4 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
           >
-            {/* Duplikasi array untuk memastikan loop tidak pernah putus */}
-            {[...Array(2)].map((_, i) => (
+            {[...Array(4)].map((_, i) => (
               <React.Fragment key={`row-${i}`}>
                 {REVIEWS.map((review, idx) => (
                   <div
-                    key={idx}
-                    className="w-[320px] md:w-[450px] flex-shrink-0 bg-[#fafafa] p-8 md:p-10 rounded-3xl border border-gray-100 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow duration-300 cursor-default"
+                    key={`${i}-${idx}`}
+                    className="w-[260px] md:w-[400px] flex-shrink-0 bg-[#fafafa] p-6 md:p-8 rounded-3xl border border-gray-100 flex flex-col justify-between shadow-sm pointer-events-none"
                   >
                     <div>
                       <StarRating count={review.rating} />
-                      {/* PERBAIKAN ERROR: Menggunakan &quot; pengganti tanda kutip ganda */}
-                      <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-8 italic font-serif">
+                      <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-6 md:mb-8 italic font-serif">
                         &quot;{review.text}&quot;
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">{review.name}</h4>
+                      <h4 className="font-bold text-gray-900 text-sm md:text-base">
+                        {review.name}
+                      </h4>
                       <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider mt-1">
                         {review.role}
                       </p>
@@ -434,7 +507,7 @@ export default function CompanyProfile() {
                 ))}
               </React.Fragment>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
