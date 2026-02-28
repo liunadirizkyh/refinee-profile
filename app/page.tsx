@@ -6,6 +6,7 @@ import {
   useTransform,
   Variants,
   useMotionValueEvent,
+  AnimatePresence, // Tambahan untuk animasi hamburger menu
 } from "framer-motion";
 import React, { useRef, useState, useEffect } from "react";
 
@@ -63,9 +64,10 @@ const REVIEWS = [
 
 export default function CompanyProfile() {
   const { scrollYProgress, scrollY } = useScroll();
-  const heroRef = useRef(null);
+  const heroRef = useRef<HTMLElement>(null);
 
   const [scrollDir, setScrollDir] = useState("down");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State untuk Menu HP
 
   useMotionValueEvent(scrollY, "change", (current) => {
     const prev = scrollY.getPrevious();
@@ -141,11 +143,8 @@ export default function CompanyProfile() {
     </div>
   );
 
-  // -------------------------------------------------------------
-  // LOGIKA DRAGGABLE + AUTO-SCROLL (KIRI KE KANAN)
-  // -------------------------------------------------------------
   const carouselRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false); // Hover dihapus, hanya pakai Dragging
+  const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startScrollLeft, setStartScrollLeft] = useState(0);
 
@@ -155,17 +154,14 @@ export default function CompanyProfile() {
 
     let animationId: number;
 
-    // Set posisi awal scroll di tengah agar bisa ditarik
     if (el.scrollLeft === 0) {
       el.scrollLeft = el.scrollWidth / 2;
     }
 
     const autoScroll = () => {
-      // HANYA BERHENTI SAAT DI-DRAG (DIKLIK & DITAHAN)
       if (!isDragging) {
-        el.scrollLeft -= 1; // Auto-jalan ke kanan
+        el.scrollLeft -= 1;
 
-        // Infinite Loop Kiri ke Kanan
         if (el.scrollLeft <= 0) {
           el.scrollLeft += el.scrollWidth / 2;
         }
@@ -177,7 +173,6 @@ export default function CompanyProfile() {
     return () => cancelAnimationFrame(animationId);
   }, [isDragging]);
 
-  // Fungsi Drag untuk Desktop (Mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     if (carouselRef.current) {
@@ -193,7 +188,6 @@ export default function CompanyProfile() {
     const walk = (x - startX) * 1.5;
     carouselRef.current.scrollLeft = startScrollLeft - walk;
 
-    // Infinite Loop saat ditarik manual
     if (carouselRef.current.scrollLeft <= 0) {
       carouselRef.current.scrollLeft += carouselRef.current.scrollWidth / 2;
       setStartX(e.pageX - carouselRef.current.offsetLeft);
@@ -208,10 +202,22 @@ export default function CompanyProfile() {
     }
   };
 
-  // -------------------------------------------------------------
+  // FUNGSI SMOOTH SCROLL & TUTUP MENU HP
+  const scrollToSection = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    targetId: string,
+  ) => {
+    e.preventDefault();
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth" });
+    }
+    // Tutup menu hamburger setelah diklik
+    setIsMobileMenuOpen(false);
+  };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans overflow-x-hidden selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans overflow-x-hidden selection:bg-black selection:text-white scroll-smooth">
       {/* SCROLL PROGRESS BAR */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-black z-[60] origin-left"
@@ -223,40 +229,103 @@ export default function CompanyProfile() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: customEasing, delay: 0.5 }}
-        className="fixed w-full top-0 bg-white/60 backdrop-blur-xl z-50 border-b border-gray-200/50 px-5 md:px-8 py-4 md:py-5 flex justify-between items-center transition-colors duration-500 hover:bg-white/95"
+        className="fixed w-full top-0 bg-white/60 backdrop-blur-xl z-50 border-b border-gray-200/50 px-5 md:px-8 py-4 flex justify-between items-center transition-colors duration-500 hover:bg-white/95"
       >
-        <div className="text-xl md:text-2xl font-black tracking-tighter uppercase text-gray-900 overflow-hidden">
-          <motion.div
+        <div className="text-xl md:text-2xl font-black tracking-tighter uppercase text-gray-900 overflow-hidden cursor-pointer z-50">
+          <motion.a
+            href="#home"
+            onClick={(e) => scrollToSection(e, "home")}
             custom="down"
             variants={maskReveal}
             initial="hidden"
             animate="visible"
+            className="block hover:opacity-70 transition-opacity"
           >
             Refinée
-          </motion.div>
+          </motion.a>
         </div>
+
+        {/* MENU DESKTOP: Home, Featured, Reviews */}
         <div className="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-gray-800">
-          {["Home", "Story", "Collection"].map((item, i) => (
+          {["Home", "Featured", "Reviews"].map((item) => (
             <motion.a
               key={item}
               href={`#${item.toLowerCase()}`}
+              onClick={(e) => scrollToSection(e, item.toLowerCase())}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 + i * 0.1, ease: customEasing }}
-              className="relative overflow-hidden group hover:text-black transition-colors duration-300"
+              transition={{
+                delay:
+                  0.6 + ["Home", "Featured", "Reviews"].indexOf(item) * 0.1,
+                ease: customEasing,
+              }}
+              className="relative overflow-hidden group hover:text-black transition-colors duration-300 py-2"
             >
               {item}
               <span className="absolute bottom-0 left-0 w-full h-[1px] bg-black transform scale-x-0 origin-right transition-transform duration-300 group-hover:scale-x-100 group-hover:origin-left" />
             </motion.a>
           ))}
         </div>
+
+        {/* HAMBURGER MENU ICON MOBILE */}
+        <div
+          className="md:hidden flex items-center cursor-pointer p-2 z-50"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <svg
+            className="w-6 h-6 text-gray-900 transition-transform duration-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {isMobileMenuOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </div>
+
+        {/* DROPDOWN MENU MOBILE */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: customEasing }}
+              className="absolute top-full left-0 w-full bg-white shadow-xl border-b border-gray-100 md:hidden flex flex-col py-2 px-5"
+            >
+              {["Home", "Featured", "Reviews"].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={(e) => scrollToSection(e, item.toLowerCase())}
+                  className="py-4 text-xs font-bold uppercase tracking-[0.2em] text-gray-900 border-b border-gray-100 last:border-none hover:text-gray-500 transition-colors"
+                >
+                  {item}
+                </a>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* HERO SECTION */}
       <section
         id="home"
         ref={heroRef}
-        className="relative w-full pt-[72px] md:pt-[88px] bg-white overflow-hidden flex flex-col items-center"
+        className="relative w-full pt-[60px] md:pt-[72px] bg-white overflow-hidden flex flex-col items-center"
       >
         <motion.div
           style={{ y: heroY }}
@@ -274,13 +343,13 @@ export default function CompanyProfile() {
       </section>
 
       {/* MARQUEE RUNNING TEXT */}
-      <div className="relative z-20 w-full bg-black text-white py-4 md:py-6 overflow-hidden flex whitespace-nowrap shadow-2xl">
+      <div className="relative z-20 w-full bg-black text-white py-3 md:py-5 overflow-hidden flex whitespace-nowrap shadow-2xl">
         <motion.div
           animate={{ x: ["0%", "-50%"] }}
           transition={{ ease: "linear", duration: 25, repeat: Infinity }}
           className="flex w-max"
         >
-          <div className="flex gap-10 md:gap-16 pr-10 md:pr-16 text-xs md:text-sm font-medium tracking-[0.2em] uppercase items-center">
+          <div className="flex gap-8 md:gap-16 pr-8 md:pr-16 text-[10px] md:text-sm font-medium tracking-[0.2em] uppercase items-center">
             {[...Array(4)].map((_, i) => (
               <React.Fragment key={`part1-${i}`}>
                 <span className="hover:text-gray-400 transition-colors cursor-default">
@@ -294,7 +363,7 @@ export default function CompanyProfile() {
               </React.Fragment>
             ))}
           </div>
-          <div className="flex gap-10 md:gap-16 pr-10 md:pr-16 text-xs md:text-sm font-medium tracking-[0.2em] uppercase items-center">
+          <div className="flex gap-8 md:gap-16 pr-8 md:pr-16 text-[10px] md:text-sm font-medium tracking-[0.2em] uppercase items-center">
             {[...Array(4)].map((_, i) => (
               <React.Fragment key={`part2-${i}`}>
                 <span className="hover:text-gray-400 transition-colors cursor-default">
@@ -311,10 +380,10 @@ export default function CompanyProfile() {
         </motion.div>
       </div>
 
-      {/* NEW COLLECTION SECTION */}
+      {/* NEW COLLECTION SECTION (ID diubah jadi: featured) */}
       <section
-        id="collection"
-        className="relative z-20 py-20 md:py-32 px-5 md:px-8 bg-[#fafafa]"
+        id="featured"
+        className="relative z-20 py-20 md:py-32 px-5 md:px-8 bg-[#fafafa] scroll-mt-20"
       >
         <motion.div
           custom={scrollDir}
@@ -369,13 +438,13 @@ export default function CompanyProfile() {
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                  <span className="bg-black text-white text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl">
+                  <span className="bg-black text-white text-[10px] md:text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl whitespace-nowrap">
                     View Details
                   </span>
                 </div>
               </div>
 
-              <div className="p-6 md:p-8 flex flex-col gap-2">
+              <div className="p-5 md:p-8 flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-4">
                   <div>
                     <h3 className="text-lg md:text-2xl font-bold text-gray-900 group-hover:text-gray-600 transition-colors">
@@ -386,7 +455,7 @@ export default function CompanyProfile() {
                     </p>
                   </div>
 
-                  <span className="text-xs md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full">
+                  <span className="text-[10px] md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full whitespace-nowrap">
                     3 Colors
                   </span>
                 </div>
@@ -413,13 +482,13 @@ export default function CompanyProfile() {
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                  <span className="bg-black text-white text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl">
+                  <span className="bg-black text-white text-[10px] md:text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl whitespace-nowrap">
                     View Details
                   </span>
                 </div>
               </div>
 
-              <div className="p-6 md:p-8 flex flex-col gap-2">
+              <div className="p-5 md:p-8 flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-4">
                   <div>
                     <h3 className="text-lg md:text-2xl font-bold text-gray-900 group-hover:text-gray-600 transition-colors">
@@ -431,7 +500,7 @@ export default function CompanyProfile() {
                     </p>
                   </div>
 
-                  <span className="text-xs md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full">
+                  <span className="text-[10px] md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full whitespace-nowrap">
                     Premium
                   </span>
                 </div>
@@ -441,15 +510,18 @@ export default function CompanyProfile() {
         </motion.div>
       </section>
 
-      {/* REVIEWS SECTION */}
-      <section className="relative z-20 py-20 md:py-32 bg-white overflow-hidden border-t border-gray-100">
+      {/* REVIEWS SECTION (ID diubah jadi: reviews) */}
+      <section
+        id="reviews"
+        className="relative z-20 py-16 md:py-32 bg-white overflow-hidden border-t border-gray-100 scroll-mt-20"
+      >
         <motion.div
           custom={scrollDir}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, margin: "-10% 0px -10% 0px" }}
           variants={staggerContainer}
-          className="text-center max-w-3xl mx-auto mb-12 md:mb-20 px-5"
+          className="text-center max-w-3xl mx-auto mb-10 md:mb-20 px-5"
         >
           <div className="overflow-hidden flex justify-center">
             <motion.span
@@ -462,7 +534,7 @@ export default function CompanyProfile() {
           <div className="overflow-hidden flex justify-center">
             <motion.h2
               variants={maskReveal}
-              className="text-4xl md:text-6xl font-black tracking-tighter text-gray-900"
+              className="text-3xl md:text-6xl font-black tracking-tighter text-gray-900"
             >
               COMMUNITY
             </motion.h2>
@@ -472,22 +544,20 @@ export default function CompanyProfile() {
         <div className="w-full relative [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
           <div
             ref={carouselRef}
-            // Event MOUSE untuk desktop
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={() => setIsDragging(false)}
             onMouseLeave={() => setIsDragging(false)}
-            // Event TOUCH untuk HP
             onTouchStart={() => setIsDragging(true)}
             onTouchEnd={() => setIsDragging(false)}
-            className={`flex w-full overflow-x-auto gap-4 md:gap-8 px-5 md:px-8 pb-10 pt-4 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+            className={`flex w-full overflow-x-auto gap-4 md:gap-8 px-5 md:px-8 pb-8 pt-4 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
           >
             {[...Array(4)].map((_, i) => (
               <React.Fragment key={`row-${i}`}>
                 {REVIEWS.map((review, idx) => (
                   <div
                     key={`${i}-${idx}`}
-                    className="w-[260px] md:w-[400px] flex-shrink-0 bg-[#fafafa] p-6 md:p-8 rounded-3xl border border-gray-100 flex flex-col justify-between shadow-sm pointer-events-none"
+                    className="w-[280px] md:w-[400px] flex-shrink-0 bg-[#fafafa] p-6 md:p-8 rounded-3xl border border-gray-100 flex flex-col justify-between shadow-sm pointer-events-none"
                   >
                     <div>
                       <StarRating count={review.rating} />
@@ -512,7 +582,7 @@ export default function CompanyProfile() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-black text-white pt-20 md:pt-24 pb-10 md:pb-12 px-5 md:px-8 relative z-20 overflow-hidden">
+      <footer className="bg-black text-white pt-16 md:pt-24 pb-8 md:pb-12 px-5 md:px-8 relative z-20 overflow-hidden">
         <motion.div
           custom={scrollDir}
           initial="hidden"
@@ -538,7 +608,7 @@ export default function CompanyProfile() {
               <a
                 key={social}
                 href="#"
-                className="relative overflow-hidden group hover:text-white transition-colors"
+                className="relative overflow-hidden group hover:text-white transition-colors py-2"
               >
                 {social}
                 <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white transform scale-x-0 origin-right transition-transform duration-300 group-hover:scale-x-100 group-hover:origin-left" />
@@ -548,7 +618,7 @@ export default function CompanyProfile() {
 
           <motion.p
             variants={maskReveal}
-            className="text-gray-600 text-[10px] md:text-xs font-medium tracking-widest uppercase text-center"
+            className="text-gray-500 text-[10px] md:text-xs font-medium tracking-widest uppercase text-center"
           >
             © 2026 Refinée. All rights reserved.
           </motion.p>
