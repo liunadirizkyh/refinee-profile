@@ -380,7 +380,7 @@ export default function CompanyProfile() {
         </motion.div>
       </div>
 
-      {/* NEW COLLECTION SECTION (ID diubah jadi: featured) */}
+      {/* NEW COLLECTION SECTION */}
       <section
         id="featured"
         className="relative z-20 py-20 md:py-32 px-5 md:px-8 bg-[#fafafa] scroll-mt-20"
@@ -419,12 +419,15 @@ export default function CompanyProfile() {
           variants={staggerContainer}
           className="max-w-[90rem] mx-auto grid md:grid-cols-2 gap-8 md:gap-16"
         >
-          {/* PRODUCT 1 */}
+          {/* PRODUCT 1: Freya Knit Neck Tee */}
           <motion.div variants={springCard} className="group cursor-pointer">
-            <motion.div
+            <motion.a
+              href="https://shopee.co.id/refinee?originalCategoryId=11042877#product_list"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
+              className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden block"
             >
               <div className="relative w-full overflow-hidden">
                 <motion.img
@@ -460,15 +463,18 @@ export default function CompanyProfile() {
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           </motion.div>
 
-          {/* PRODUCT 2 */}
+          {/* PRODUCT 2: Boardshort Pants Crinkle */}
           <motion.div variants={springCard} className="group cursor-pointer">
-            <motion.div
+            <motion.a
+              href="https://shopee.co.id/product/1386740594/27427560185"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
+              className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden block"
             >
               <div className="relative w-full overflow-hidden">
                 <motion.img
@@ -505,7 +511,7 @@ export default function CompanyProfile() {
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           </motion.div>
         </motion.div>
       </section>
@@ -604,13 +610,28 @@ export default function CompanyProfile() {
             variants={maskReveal}
             className="flex flex-wrap justify-center gap-6 md:gap-8 mb-12 md:mb-16 text-[10px] md:text-xs font-bold uppercase tracking-widest text-gray-400"
           >
-            {["Instagram", "TikTok", "WhatsApp"].map((social) => (
+            {[
+              {
+                name: "Instagram",
+                url: "https://www.instagram.com/refinee.official/",
+              },
+              {
+                name: "TikTok",
+                url: "https://www.tiktok.com/@refinee.official",
+              },
+              {
+                name: "WhatsApp",
+                url: "https://api.whatsapp.com/send/?phone=6282258726257&text&type=phone_number&app_absent=0",
+              },
+            ].map((social) => (
               <a
-                key={social}
-                href="#"
+                key={social.name}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="relative overflow-hidden group hover:text-white transition-colors py-2"
               >
-                {social}
+                {social.name}
                 <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white transform scale-x-0 origin-right transition-transform duration-300 group-hover:scale-x-100 group-hover:origin-left" />
               </a>
             ))}
