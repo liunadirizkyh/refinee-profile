@@ -225,36 +225,42 @@ export default function CompanyProfile() {
             <motion.div
               whileHover={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="relative bg-white shadow-md group-hover:shadow-2xl transition-shadow duration-700 border border-gray-100 rounded-2xl flex flex-col overflow-hidden"
+              className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
             >
-              <div className="relative w-full aspect-[4/3] bg-[#f8f8f8] overflow-hidden">
+              {/* IMAGE CONTAINER — NO FORCED RATIO */}
+              <div className="relative w-full overflow-hidden">
                 <motion.img
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: customEasing }}
                   src="/freya-knit.png"
                   alt="Freya Knit Neck Tee"
-                  className="w-full h-full object-contain p-6 md:p-8"
+                  className="w-full h-auto block"
                 />
+
+                {/* OVERLAY */}
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                  <span className="bg-black text-white text-[10px] md:text-xs font-bold uppercase tracking-widest py-3 px-6 md:py-3.5 md:px-8 rounded-full shadow-2xl whitespace-nowrap">
+                {/* BUTTON */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <span className="bg-black text-white text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl">
                     View Details
                   </span>
                 </div>
               </div>
 
-              <div className="p-6 md:p-8 bg-white z-10 flex flex-col gap-2">
-                <div className="flex justify-between items-start gap-3 md:gap-4">
+              {/* TEXT */}
+              <div className="p-6 md:p-8 flex flex-col gap-2">
+                <div className="flex justify-between items-start gap-4">
                   <div>
-                    <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-1.5 group-hover:text-gray-600 transition-colors">
+                    <h3 className="text-lg md:text-2xl font-bold text-gray-900 group-hover:text-gray-600 transition-colors">
                       Freya Knit Neck Tee
                     </h3>
                     <p className="text-xs md:text-sm font-medium text-gray-400 tracking-wide">
                       For Daily Wear • Unisex
                     </p>
                   </div>
-                  <span className="text-[10px] md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full flex-shrink-0">
+
+                  <span className="text-xs md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full">
                     3 Colors
                   </span>
                 </div>
@@ -267,39 +273,43 @@ export default function CompanyProfile() {
             <motion.div
               whileHover={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="relative bg-white shadow-md group-hover:shadow-2xl transition-shadow duration-700 border border-gray-100 rounded-2xl flex flex-col overflow-hidden"
+              className="relative bg-white shadow-md group-hover:shadow-2xl transition-all duration-700 border border-gray-100 rounded-2xl overflow-hidden"
             >
-              <div className="relative w-full aspect-[4/3] bg-[#f8f8f8] overflow-hidden">
+              {/* IMAGE CONTAINER — NO FORCED RATIO */}
+              <div className="relative w-full overflow-hidden">
                 <motion.img
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: customEasing }}
                   src="/boardshort.png"
                   alt="Boardshort Pants Crinkle"
-                  className="w-full h-full object-contain p-6 md:p-8"
+                  className="w-full h-auto block"
                 />
+
+                {/* OVERLAY */}
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                  <span className="bg-black text-white text-[10px] md:text-xs font-bold uppercase tracking-widest py-3 px-6 md:py-3.5 md:px-8 rounded-full shadow-2xl whitespace-nowrap">
+                {/* BUTTON */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <span className="bg-black text-white text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-full shadow-xl">
                     View Details
                   </span>
                 </div>
               </div>
 
-              <div className="p-6 md:p-8 bg-white z-10 flex flex-col gap-2">
-                <div className="flex justify-between items-start gap-3 md:gap-4">
+              {/* TEXT */}
+              <div className="p-6 md:p-8 flex flex-col gap-2">
+                <div className="flex justify-between items-start gap-4">
                   <div>
-                    <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-1.5 group-hover:text-gray-600 transition-colors">
+                    <h3 className="text-lg md:text-2xl font-bold text-gray-900 group-hover:text-gray-600 transition-colors">
                       Boardshort Pants{" "}
-                      <span className="italic font-serif font-medium text-gray-500">
-                        Crinkle
-                      </span>
                     </h3>
+
                     <p className="text-xs md:text-sm font-medium text-gray-400 tracking-wide">
                       Elastic • Functional Pocket
                     </p>
                   </div>
-                  <span className="text-[10px] md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full flex-shrink-0">
+
+                  <span className="text-xs md:text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 md:px-4 md:py-1.5 rounded-full">
                     Premium
                   </span>
                 </div>
