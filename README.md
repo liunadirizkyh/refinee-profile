@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📄 Refinee Profile
 
-## Getting Started
+Refinee Profile is a modern, responsive company profile website built with **Next.js** and **React**. It features dynamic scroll animations, a clean user interface, and an optimized layout that highlights the brand's services, featured projects, and client reviews.
 
-First, run the development server:
+## ✨ Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Interactive Animations**: Smooth scroll-linked animations and striking transitions powered by Framer Motion.
+- **Dynamic Sections**: Engaging content blocks including an animated text marquee, featured works, and client testimonials.
+- **Scroll Progress Bar**: A visual indicator at the top of the window that tracks reading progress.
+- **Responsive Design**: Carefully crafted with Tailwind CSS for an optimal viewing experience on both desktop and mobile devices.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: Next.js, React
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Type Safety**: TypeScript
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Getting Started
 
-## Learn More
+### Prerequisites
+Make sure you have Node.js and npm (or yarn/pnpm/bun) installed on your machine.
 
-To learn more about Next.js, take a look at the following resources:
+### Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository and navigate into the project directory:
+   ```bash
+   git clone https://github.com/liunadirizkyh/refinee-profile.git
+   cd refinee-profile
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Install the dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-## Deploy on Vercel
+3. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application in action.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page if you want to contribute.
+
+## 📝 License
+
+This project is privately owned and developed. All rights reserved.
